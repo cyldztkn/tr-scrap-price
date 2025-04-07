@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Fiyat Tablosu</title>
+  </head>
+  <body>
+    <div id="priceTable">
+      <!-- Fiyat tablosu buraya eklenecek -->
+    </div>
+    <h1>Api</h1>
+    <div id="priceTableContainer"></div>
+
+    <script>
+      async function fetchAndDisplayPrices() {
+        try {
+          // /api/v1
+          const response = await fetch(
+            "http://localhost:3000/api/v1/prices/latest"
+          );
+          const prices = await response.json();
+          displayPricesInTable(prices);
+        } catch (error) {
+          console.error("Fiyatlar alınırken hata oluştu:", error);
+          document.getElementById("priceTable").innerText =
+            "Fiyatlar alınırken hata oluştu.";
+        }
+      }
+
+      function displayPricesInTable(prices) {
+        const table = document.createElement("table");
+        table.style.borderCollapse = "collapse"; // Tablo kenarlıklarını birleştir
+        table.style.width = "100%"; // Tablo genişliğini %100 yap
+
+        // Tablo başlığını oluştur
+        const thead = table.createTHead();
+        let headerRow = thead.insertRow();
+        const headers = [
+          "Şirket",
+          "DKP",
+          "Ekstra",
+          "Grup1",
+          "Grup2",
+          "Talas",
+          "Para Birimi",
+          "Güncelleme Tarihi",
+        ];
+        headers.forEach((headerText) => {
+          let header = document.createElement("th");
+          header.textContent = headerText;
+          header.style.border = "1px solid black"; // Kenarlık ekle
+          header.style.padding = "8px"; // İç boşluk ekle
+          header.style.textAlign = "left"; // Metni sola hizala
+          headerRow.appendChild(header);
+        });
+
+        // Tablo gövdesini oluştur
+        const tbody = table.createTBody();
+        prices.forEach((priceData) => {
+          let row = tbody.insertRow();
+          let companyCell = row.insertCell();
+          companyCell.textContent = priceData.company;
+          companyCell.style.border = "1px solid black";
+          companyCell.style.padding = "8px";
+
+          // Fiyatları ekle
+          for (const category of ["DKP", "Ekstra", "Grup1", "Grup2", "Talas"]) {
+            let priceCell = row.insertCell();
+            priceCell.textContent = priceData.prices[category];
+            priceCell.style.border = "1px solid black";
+            priceCell.style.padding = "8px";
+          }
+
+          let currencyCell = row.insertCell();
+          currencyCell.textContent = priceData.currency;
+          currencyCell.style.border = "1px solid black";
+          currencyCell.style.padding = "8px";
+
+          let updateDateCell = row.insertCell();
+          const date = new Date(priceData.updateDate);
+          updateDateCell.textContent = date.toLocaleDateString(); // Tarihi yerel formata çevir
+          updateDateCell.style.border = "1px solid black";
+          updateDateCell.style.padding = "8px";
+        });
+
+        const tableContainer = document.getElementById("priceTable");
+        tableContainer.innerHTML = ""; // Önceki içeriği temizle
+        tableContainer.appendChild(table);
+      }
+
+      // Sayfa yüklendiğinde fiyatları getir ve tabloyu oluştur
+      window.onload = fetchAndDisplayPrices;
+    </script>
+    <script defer>
+      let tableContainer = document.getElementById("priceTableContainer");
+      fetch("http://localhost:3000/api/v1/export/html")
+        .then((res) => res.text())
+        .then((table) => {
+          tableContainer.innerHTML = table;
+        });
+    </script>
+  </body>
+</html>

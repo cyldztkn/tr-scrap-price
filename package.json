@@ -1,0 +1,26 @@
+{
+  "name": "tr-scrap-price",
+  "description": "Turkiye Metal Hurda Fiyatlari ",
+  "author": "Çağkan Yildiztekin",
+  "license": "MIT",
+  "type": "module",
+  "version": "0.1.0",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "eslint": "^9.24.0",
+    "express": "^5.1.0",
+    "mongoose": "^8.13.2",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^5.0.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.9"
+  },
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "nodemon src/server.js",
+    "seed": "node src/data/dummyData.js seed",
+    "swagger-gen": "node swagger.js"
+  }
+}
