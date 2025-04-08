@@ -9,17 +9,17 @@ const exportService = {
 
 function generateHTMLTable(prices) {
   let html = `
-    <table style="border-collapse: collapse; width: 100%; font-family: Arial, sans-serif;">
+    <table>
       <thead>
         <tr>
-          <th style="border: 1px solid #000; padding: 8px;">Şirket</th>
-          <th style="border: 1px solid #000; padding: 8px;">DKP</th>
-          <th style="border: 1px solid #000; padding: 8px;">Ekstra</th>
-          <th style="border: 1px solid #000; padding: 8px;">Grup1</th>
-          <th style="border: 1px solid #000; padding: 8px;">Grup2</th>
-          <th style="border: 1px solid #000; padding: 8px;">Talas</th>
-          <th style="border: 1px solid #000; padding: 8px;">Para Birimi</th>
-          <th style="border: 1px solid #000; padding: 8px;">Güncelleme Tarihi</th>
+          <th>Şirket</th>
+          <th>DKP</th>
+          <th>Ekstra</th>
+          <th>Grup1</th>
+          <th>Grup2</th>
+          <th>Talas</th>
+          <th>Para Birimi</th>
+          <th>Güncelleme Tarihi</th>
         </tr>
       </thead>
       <tbody>
@@ -28,30 +28,14 @@ function generateHTMLTable(prices) {
   prices.forEach((priceData) => {
     html += `
       <tr>
-        <td style="border: 1px solid #000; padding: 8px;">${
-          priceData.company
-        }</td>
-        <td style="border: 1px solid #000; padding: 8px;">${
-          priceData.prices.DKP
-        }</td>
-        <td style="border: 1px solid #000; padding: 8px;">${
-          priceData.prices.Ekstra
-        }</td>
-        <td style="border: 1px solid #000; padding: 8px;">${
-          priceData.prices.Grup1
-        }</td>
-        <td style="border: 1px solid #000; padding: 8px;">${
-          priceData.prices.Grup2
-        }</td>
-        <td style="border: 1px solid #000; padding: 8px;">${
-          priceData.prices.Talas
-        }</td>
-        <td style="border: 1px solid #000; padding: 8px;">${
-          priceData.currency
-        }</td>
-        <td style="border: 1px solid #000; padding: 8px;">${new Date(
-          priceData.updateDate
-        ).toLocaleDateString()}</td>
+        <td>${priceData.company}</td>
+        <td>${priceData.prices.DKP}</td>
+        <td>${priceData.prices.Ekstra}</td>
+        <td>${priceData.prices.Grup1}</td>
+        <td>${priceData.prices.Grup2}</td>
+        <td>${priceData.prices.Talas}</td>
+        <td>${priceData.currency}</td>
+        <td>${new Date(priceData.updateDate).toLocaleDateString()}</td>
       </tr>
     `;
   });

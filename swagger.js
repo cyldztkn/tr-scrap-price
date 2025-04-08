@@ -12,6 +12,9 @@ const options = {
             {
                 url: 'https://tr-scrap-price.onrender.com/api/v1',
             },
+            {
+                url: 'http://127.0.0.1:3000/api/v1',
+            },
         ],
     },
     apis: ['./src/routes/*.js', './src/controllers/*.js'], // Rota ve kontrolcü dosyalarının yolu
