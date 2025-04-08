@@ -11,6 +11,8 @@
     </div>
     <h1>Api</h1>
     <div id="priceTableContainer"></div>
+    <h1>Api Live</h1>
+    <div id="priceTableContainer2"></div>
 
     <script>
       async function fetchAndDisplayPrices() {
@@ -98,6 +100,14 @@
         .then((res) => res.text())
         .then((table) => {
           tableContainer.innerHTML = table;
+        });
+    </script>
+    <script defer>
+      let tableContainer2 = document.getElementById("priceTableContainer2");
+      fetch("https://tr-scrap-price.onrender.com/api/v1/export/html")
+        .then((res) => res.text())
+        .then((table) => {
+          tableContainer2.innerHTML = table;
         });
     </script>
   </body>
