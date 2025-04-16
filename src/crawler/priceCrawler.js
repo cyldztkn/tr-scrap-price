@@ -2,21 +2,20 @@ import fetch from "node-fetch";
 import https from "https";
 import puppeteer from "puppeteer";
 import fs from "fs";
-import mongoose from 'mongoose';
-import Price from '../models/Price.js';
+import mongoose from "mongoose";
+import Price from "../models/Price.js";
 import config from "../config/config.js";
-
 
 // MongoDB bağlantı fonksiyonu
 async function connectDB() {
   try {
     await mongoose.connect(config.mongodbUri, {
       useNewUrlParser: true,
-      useUnifiedTopology: true
+      useUnifiedTopology: true,
     });
-    console.log('MongoDB bağlantısı başarılı');
+    console.log("MongoDB bağlantısı başarılı");
   } catch (error) {
-    console.error('MongoDB bağlantı hatası:', error);
+    console.error("MongoDB bağlantı hatası:", error);
     process.exit(1);
   }
 }
@@ -365,24 +364,28 @@ async function scrapeIsdemir() {
 // Çolakoğlu (fetch)
 async function fetchColakoglu() {
   try {
-    const response = await fetch("https://client.colakoglu.com.tr/webservice/scrap-price", {
-      agent: httpsAgent,
-      headers: {
-        accept: "*/*",
-        "accept-language": "tr-TR,tr;q=0.9,en-US;q=0.8,en;q=0.7",
-        "cache-control": "no-cache",
-        pragma: "no-cache",
-        "sec-ch-ua": '"Google Chrome";v="135", "Not-A.Brand";v="8", "Chromium";v="135"',
-        "sec-ch-ua-mobile": "?0",
-        "sec-ch-ua-platform": '"Windows"',
-        "sec-fetch-dest": "empty",
-        "sec-fetch-mode": "cors",
-        "sec-fetch-site": "same-site",
-        Referer: "https://www.colakoglu.com.tr/",
-        "Referrer-Policy": "strict-origin-when-cross-origin",
-      },
-      method: "GET",
-    });
+    const response = await fetch(
+      "https://client.colakoglu.com.tr/webservice/scrap-price",
+      {
+        agent: httpsAgent,
+        headers: {
+          accept: "*/*",
+          "accept-language": "tr-TR,tr;q=0.9,en-US;q=0.8,en;q=0.7",
+          "cache-control": "no-cache",
+          pragma: "no-cache",
+          "sec-ch-ua":
+            '"Google Chrome";v="135", "Not-A.Brand";v="8", "Chromium";v="135"',
+          "sec-ch-ua-mobile": "?0",
+          "sec-ch-ua-platform": '"Windows"',
+          "sec-fetch-dest": "empty",
+          "sec-fetch-mode": "cors",
+          "sec-fetch-site": "same-site",
+          Referer: "https://www.colakoglu.com.tr/",
+          "Referrer-Policy": "strict-origin-when-cross-origin",
+        },
+        method: "GET",
+      }
+    );
     const data = await response.json();
     const mapped = mapColakoglu(data.prices);
     const doc = createPriceDocument("Colakoglu", mapped);
@@ -571,11 +574,11 @@ async function scrapeKromancelik() {
 // ------------------------------
 // Tüm işlemleri çalıştırma
 // ------------------------------
-async function runAll() {
+export default async function runAll() {
   try {
     // MongoDB'ye bağlan
     await connectDB();
-    
+
     await Promise.all([
       crawlKardemir(),
       fetchColakoglu(),
@@ -584,10 +587,13 @@ async function runAll() {
       scrapeKromancelik(),
       scrapeIsdemir(),
     ]);
-    console.log("Tüm veriler MongoDB şemasına uygun şekilde işlendi ve kaydedildi.");
+    console.log(
+      "Tüm veriler MongoDB şemasına uygun şekilde işlendi ve kaydedildi."
+    );
   } catch (error) {
     console.error("Genel hata:", error);
   }
 }
 
-runAll();
+
+// runAll();
