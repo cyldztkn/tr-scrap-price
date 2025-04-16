@@ -1,0 +1,16 @@
+{
+  "company": "Asil Çelik",
+  "updateDate": "2025-04-16T07:12:41.926Z",
+  "fetchDate": "2025-04-16T07:12:41.926Z",
+  "prices": {
+    "DKP": 13680,
+    "Ekstra": 12890,
+    "Grup1": 12310,
+    "Grup2": null,
+    "Talas": null
+  },
+  "exchangeRates": {
+    "USD": null,
+    "EUR": null
+  }
+}

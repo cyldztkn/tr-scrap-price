@@ -1,0 +1,16 @@
+{
+  "company": "Colakoglu",
+  "updateDate": "2025-04-16T07:12:37.255Z",
+  "fetchDate": "2025-04-16T07:12:37.255Z",
+  "prices": {
+    "DKP": 13555,
+    "Ekstra": 13030,
+    "Grup1": 12990,
+    "Grup2": 12920,
+    "Talas": 12720
+  },
+  "exchangeRates": {
+    "USD": null,
+    "EUR": null
+  }
+}

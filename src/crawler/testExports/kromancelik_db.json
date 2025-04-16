@@ -1,0 +1,16 @@
+{
+  "company": "Kromancelik",
+  "updateDate": "2025-04-16T07:12:41.128Z",
+  "fetchDate": "2025-04-16T07:12:41.128Z",
+  "prices": {
+    "DKP": 13550,
+    "Ekstra": 13000,
+    "Grup1": 12750,
+    "Grup2": 12600,
+    "Talas": 10450
+  },
+  "exchangeRates": {
+    "USD": null,
+    "EUR": null
+  }
+}

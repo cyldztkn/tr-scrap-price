@@ -1,0 +1,16 @@
+{
+  "company": "Isdemir",
+  "updateDate": "2025-04-16T07:12:43.310Z",
+  "fetchDate": "2025-04-16T07:12:43.310Z",
+  "prices": {
+    "DKP": 13100,
+    "Ekstra": 13050,
+    "Grup1": 11780,
+    "Grup2": 9300,
+    "Talas": null
+  },
+  "exchangeRates": {
+    "USD": null,
+    "EUR": null
+  }
+}

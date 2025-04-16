@@ -1,0 +1,16 @@
+{
+  "company": "Erdemir",
+  "updateDate": "2025-04-16T07:12:43.945Z",
+  "fetchDate": "2025-04-16T07:12:43.945Z",
+  "prices": {
+    "DKP": 13050,
+    "Ekstra": 13045,
+    "Grup1": 11890,
+    "Grup2": 9505,
+    "Talas": null
+  },
+  "exchangeRates": {
+    "USD": null,
+    "EUR": null
+  }
+}

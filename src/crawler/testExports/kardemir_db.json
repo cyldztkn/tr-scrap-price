@@ -1,0 +1,46 @@
+{
+  "company": "Kardemir",
+  "updateDate": "2025-04-16T07:12:43.682Z",
+  "fetchDate": "2025-04-16T07:12:43.682Z",
+  "prices": {
+    "DKP": 14200,
+    "Ekstra": 13965,
+    "Grup1": 13820,
+    "Grup2": 13660,
+    "Talas": null
+  },
+  "exchangeRates": {
+    "USD": null,
+    "EUR": null
+  },
+  "description": "Fiyatlar 26.03.2025 tarihinden itibaren geçerli fiyatlardır.",
+  "raw": {
+    "date": "26/03/2025",
+    "prices": [
+      {
+        "material": "Özel Ekstra",
+        "price": "14220"
+      },
+      {
+        "material": "DKP Hurda",
+        "price": "14200"
+      },
+      {
+        "material": "Extra",
+        "price": "13965"
+      },
+      {
+        "material": "1.Sınıf",
+        "price": "13820"
+      },
+      {
+        "material": "2.Sınıf",
+        "price": "13660"
+      },
+      {
+        "material": "Büyük Parça İskontosu",
+        "price": "400"
+      }
+    ]
+  }
+}
