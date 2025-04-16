@@ -4,7 +4,7 @@ import convertCurrency from "../utils/currencyConverter.js";
 
 const priceService = {
   async getLatestPrices(currency = "TRY") {
-    const latestPrices = await Price.find().sort({ updateDate: -1 }).limit(5); // En son 5 fiyat kaydını getir (varsayılan olarak 5 şirket olduğunu varsayalım)
+    const latestPrices = await Price.find().sort({ updateDate: -1 }).limit(6); // En son 5 fiyat kaydını getir (varsayılan olarak 5 şirket olduğunu varsayalım)
     // Promise.all ile tüm dönüşümleri bekle
     const convertedPrices = await Promise.all(
       latestPrices.map(async (priceDoc) => {
