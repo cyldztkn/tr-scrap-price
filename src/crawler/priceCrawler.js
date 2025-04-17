@@ -225,7 +225,7 @@ async function crawlKardemir() {
   const browser = await puppeteer.launch({
     headless: true, // Headless modu açık, test için headless:false kullanabilirsiniz
     defaultViewport: null,
-    args: ["--start-maximized"],
+   args: ["--no-sandbox", "--disable-setuid-sandbox", "--start-maximized"],
   });
 
   try {
@@ -318,7 +318,7 @@ async function scrapeIsdemir() {
   const browser = await puppeteer.launch({
     headless: true,
     defaultViewport: null,
-    args: ["--start-maximized"],
+   args: ["--no-sandbox", "--disable-setuid-sandbox", "--start-maximized"],
   });
   try {
     const page = await browser.newPage();
@@ -407,7 +407,7 @@ async function scrapeErdemir() {
   const browser = await puppeteer.launch({
     headless: true,
     defaultViewport: null,
-    args: ["--start-maximized"],
+   args: ["--no-sandbox", "--disable-setuid-sandbox", "--start-maximized"],
   });
   try {
     const page = await browser.newPage();
@@ -468,7 +468,7 @@ async function scrapeAsilCelik() {
   const browser = await puppeteer.launch({
     headless: true,
     defaultViewport: null,
-    args: ["--start-maximized"],
+   args: ["--no-sandbox", "--disable-setuid-sandbox", "--start-maximized"],
   });
   try {
     const page = await browser.newPage();
@@ -518,7 +518,7 @@ async function scrapeKromancelik() {
   const browser = await puppeteer.launch({
     headless: true,
     defaultViewport: null,
-    args: ["--start-maximized"],
+   args: ["--no-sandbox", "--disable-setuid-sandbox", "--start-maximized"],
   });
   try {
     const page = await browser.newPage();
