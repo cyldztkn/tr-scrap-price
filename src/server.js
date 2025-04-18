@@ -3,7 +3,7 @@ import config from "./config/config.js";
 import mongoose from "mongoose";
 import cron from "node-cron";
 import runAll from "./crawler/priceCrawler.js";
-import TesrPuppeterr from "./crawler/testPuppeteer.js";
+import TestPuppeterr from "./crawler/testPuppeteer.js";
 import puppeteer from "puppeteer";
 
 // import connectDB from './config/db.js';
@@ -37,9 +37,13 @@ cron.schedule("0 6 * * *", async () => {
   await runAll();
 });
 
-cron.schedule("*/30 * * * *", async () => {
-  console.log("👀 Puppeteer Testi Başladı");
-  await TesrPuppeterr();
+cron.schedule("*/30 * * * * *", async () => {
+  console.log(
+    `👀 [${new Date().toLocaleString("tr-TR", {
+      timeZone: "Europe/Istanbul",
+    })}] Puppeteer Testi Başladı`
+  );
+  await TestPuppeterr();
 });
 
 startServer();

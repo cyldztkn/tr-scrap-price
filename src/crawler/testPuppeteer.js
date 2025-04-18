@@ -1,6 +1,6 @@
 import puppeteer from "puppeteer";
 
-export default async function TesrPuppeterr() {
+export default async function TestPuppeterr() {
   try {
     const browser = await puppeteer.launch({
       headless: true,
