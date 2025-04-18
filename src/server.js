@@ -32,18 +32,20 @@ const startServer = async () => {
   }
 };
 
-cron.schedule("0 6 * * *", async () => {
+cron.schedule("0 7 * * *", async () => {
   console.log("⏰ Cron job: 06:00’da runAll() başlıyor...");
   await runAll();
 });
 
-cron.schedule("*/30 * * * * *", async () => {
-  console.log(
-    `👀 [${new Date().toLocaleString("tr-TR", {
-      timeZone: "Europe/Istanbul",
-    })}] Puppeteer Testi Başladı`
-  );
-  await TestPuppeterr();
-});
+// Puppeteer Test
+
+// cron.schedule("*/30 * * * * *", async () => {
+//   console.log(
+//     `👀 [${new Date().toLocaleString("tr-TR", {
+//       timeZone: "Europe/Istanbul",
+//     })}] Puppeteer Testi Başladı`
+//   );
+//   await TestPuppeterr();
+// });
 
 startServer();

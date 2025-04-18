@@ -225,7 +225,16 @@ async function crawlKardemir() {
   const browser = await puppeteer.launch({
     headless: true, // Headless modu açık, test için headless:false kullanabilirsiniz
     defaultViewport: null,
-   args: ["--no-sandbox", "--disable-setuid-sandbox", "--start-maximized"],
+    args: [
+      "--no-sandbox",
+      "--disable-setuid-sandbox",
+      "--disable-dev-shm-usage",
+      "--disable-accelerated-2d-canvas",
+      "--disable-gpu",
+      "--no-zygote",
+      "--disable-software-rasterizer",
+      "--single-process",
+    ],
   });
 
   try {
@@ -318,7 +327,16 @@ async function scrapeIsdemir() {
   const browser = await puppeteer.launch({
     headless: true,
     defaultViewport: null,
-   args: ["--no-sandbox", "--disable-setuid-sandbox", "--start-maximized"],
+    args: [
+      "--no-sandbox",
+      "--disable-setuid-sandbox",
+      "--disable-dev-shm-usage",
+      "--disable-accelerated-2d-canvas",
+      "--disable-gpu",
+      "--no-zygote",
+      "--disable-software-rasterizer",
+      "--single-process",
+    ],
   });
   try {
     const page = await browser.newPage();
@@ -407,7 +425,16 @@ async function scrapeErdemir() {
   const browser = await puppeteer.launch({
     headless: true,
     defaultViewport: null,
-   args: ["--no-sandbox", "--disable-setuid-sandbox", "--start-maximized"],
+    args: [
+      "--no-sandbox",
+      "--disable-setuid-sandbox",
+      "--disable-dev-shm-usage",
+      "--disable-accelerated-2d-canvas",
+      "--disable-gpu",
+      "--no-zygote",
+      "--disable-software-rasterizer",
+      "--single-process",
+    ],
   });
   try {
     const page = await browser.newPage();
@@ -468,7 +495,16 @@ async function scrapeAsilCelik() {
   const browser = await puppeteer.launch({
     headless: true,
     defaultViewport: null,
-   args: ["--no-sandbox", "--disable-setuid-sandbox", "--start-maximized"],
+    args: [
+      "--no-sandbox",
+      "--disable-setuid-sandbox",
+      "--disable-dev-shm-usage",
+      "--disable-accelerated-2d-canvas",
+      "--disable-gpu",
+      "--no-zygote",
+      "--disable-software-rasterizer",
+      "--single-process",
+    ],
   });
   try {
     const page = await browser.newPage();
@@ -518,7 +554,16 @@ async function scrapeKromancelik() {
   const browser = await puppeteer.launch({
     headless: true,
     defaultViewport: null,
-   args: ["--no-sandbox", "--disable-setuid-sandbox", "--start-maximized"],
+    args: [
+      "--no-sandbox",
+      "--disable-setuid-sandbox",
+      "--disable-dev-shm-usage",
+      "--disable-accelerated-2d-canvas",
+      "--disable-gpu",
+      "--no-zygote",
+      "--disable-software-rasterizer",
+      "--single-process",
+    ],
   });
   try {
     const page = await browser.newPage();
@@ -594,6 +639,5 @@ export default async function runAll() {
     console.error("Genel hata:", error);
   }
 }
-
 
 // runAll();
