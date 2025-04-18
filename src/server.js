@@ -3,6 +3,8 @@ import config from "./config/config.js";
 import mongoose from "mongoose";
 import cron from "node-cron";
 import runAll from "./crawler/priceCrawler.js";
+import TesrPuppeterr from "./crawler/testPuppeteer.js";
+import puppeteer from "puppeteer";
 
 // import connectDB from './config/db.js';
 
@@ -33,6 +35,11 @@ const startServer = async () => {
 cron.schedule("0 6 * * *", async () => {
   console.log("⏰ Cron job: 06:00’da runAll() başlıyor...");
   await runAll();
+});
+
+cron.schedule("*/30 * * * *", async () => {
+  console.log("👀 Puppeteer Testi Başladı");
+  await TesrPuppeterr();
 });
 
 startServer();
