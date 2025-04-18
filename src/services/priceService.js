@@ -4,13 +4,35 @@ import convertCurrency from "../utils/currencyConverter.js";
 
 const priceService = {
   async getLatestPrices(currency = "TRY") {
-    const latestPrices = await Price.find().sort({ updateDate: -1 }).limit(6); // En son 5 fiyat kaydını getir (varsayılan olarak 5 şirket olduğunu varsayalım)
-    // Promise.all ile tüm dönüşümleri bekle
-    const convertedPrices = await Promise.all(
-      latestPrices.map(async (priceDoc) => {
-        return this.convertPriceCurrency(priceDoc.toObject(), currency);
+    // Tüm şirketlerin listesi
+    const companies = [
+      "Kardemir",
+      "Isdemir",
+      "Colakoglu",
+      "Erdemir",
+      "Asil Çelik",
+      "Kromancelik"
+    ];
+
+    // Her şirket için en son fiyat kaydını al
+    const latestPrices = await Promise.all(
+      companies.map(async (company) => {
+        const latestPrice = await Price.findOne({ company })
+          .sort({ updateDate: -1 })
+          .limit(1);
+        return latestPrice;
       })
     );
+
+    // Null olmayan sonuçları filtrele ve para birimi dönüşümünü uygula
+    const convertedPrices = await Promise.all(
+      latestPrices
+        .filter(price => price !== null)
+        .map(async (priceDoc) => {
+          return this.convertPriceCurrency(priceDoc.toObject(), currency);
+        })
+    );
+
     return convertedPrices;
   },
 
@@ -83,4 +105,3 @@ const priceService = {
 };
 
 export default priceService;
-  
