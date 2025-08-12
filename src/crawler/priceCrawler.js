@@ -233,7 +233,6 @@ async function crawlKardemir() {
       "--disable-gpu",
       "--no-zygote",
       "--disable-software-rasterizer",
-      "--single-process",
     ],
   });
 
@@ -335,7 +334,6 @@ async function scrapeIsdemir() {
       "--disable-gpu",
       "--no-zygote",
       "--disable-software-rasterizer",
-      "--single-process",
     ],
   });
   try {
@@ -433,7 +431,6 @@ async function scrapeErdemir() {
       "--disable-gpu",
       "--no-zygote",
       "--disable-software-rasterizer",
-      "--single-process",
     ],
   });
   try {
@@ -503,7 +500,6 @@ async function scrapeAsilCelik() {
       "--disable-gpu",
       "--no-zygote",
       "--disable-software-rasterizer",
-      "--single-process",
     ],
   });
   try {
@@ -562,7 +558,6 @@ async function scrapeKromancelik() {
       "--disable-gpu",
       "--no-zygote",
       "--disable-software-rasterizer",
-      "--single-process",
     ],
   });
   try {
@@ -623,18 +618,31 @@ export default async function runAll() {
   try {
     // MongoDB'ye bağlan
     await connectDB();
+    console.log("MongoDB bağlantısı kuruldu, crawler işlemleri başlatılıyor...");
 
-    await Promise.all([
-      crawlKardemir(),
-      fetchColakoglu(),
-      scrapeErdemir(),
-      scrapeAsilCelik(),
-      scrapeKromancelik(),
-      scrapeIsdemir(),
-    ]);
-    console.log(
-      "Tüm veriler MongoDB şemasına uygun şekilde işlendi ve kaydedildi."
-    );
+    // Crawler fonksiyonlarını sırayla çalıştır
+    const crawlers = [
+      { name: "Kardemir", func: crawlKardemir },
+      { name: "Colakoglu", func: fetchColakoglu },
+      { name: "Erdemir", func: scrapeErdemir },
+      { name: "Asil Çelik", func: scrapeAsilCelik },
+      { name: "Kromancelik", func: scrapeKromancelik },
+      { name: "Isdemir", func: scrapeIsdemir },
+    ];
+
+    for (const crawler of crawlers) {
+      try {
+        console.log(`${crawler.name} crawler işlemi başlatılıyor...`);
+        await crawler.func();
+        console.log(`${crawler.name} crawler işlemi başarıyla tamamlandı.`);
+      } catch (error) {
+        console.error(`${crawler.name} crawler işleminde hata oluştu:`, error.message);
+        // Hata oluşsa bile diğer crawler'ların çalışmasına devam et
+        continue;
+      }
+    }
+
+    console.log("Tüm crawler işlemleri tamamlandı.");
   } catch (error) {
     console.error("Genel hata:", error);
   }
