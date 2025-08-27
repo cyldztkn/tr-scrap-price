@@ -60,6 +60,40 @@ const priceService = {
     return convertedPrices;
   },
 
+  async getHistoricalPricesForPeriod(
+    companies,
+    startDate,
+    endDate,
+    currency = "TRY"
+  ) {
+    const start = new Date(startDate);
+    let end = new Date(endDate);
+    const maxEnd = new Date(start);
+    maxEnd.setMonth(maxEnd.getMonth() + 1);
+    if (end > maxEnd) {
+      end = maxEnd;
+    }
+
+    const results = {};
+    await Promise.all(
+      companies.map(async (company) => {
+        const prices = await Price.find({
+          company,
+          updateDate: { $gte: start, $lt: end },
+        }).sort({ updateDate: -1 });
+
+        const converted = await Promise.all(
+          prices.map((priceDoc) =>
+            this.convertPriceCurrency(priceDoc.toObject(), currency)
+          )
+        );
+        results[company] = converted;
+      })
+    );
+
+    return results;
+  },
+
   async getCategoryPriceAnalysis(category, currency = "TRY") {
     const allPrices = await Price.find().sort({ updateDate: -1 });
     const categoryPrices = allPrices.map((priceDoc) => ({
