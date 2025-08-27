@@ -25,17 +25,21 @@ function generateHTMLTable(prices) {
       <tbody>
   `;
 
-  prices.forEach((priceData) => {
+  prices.sort((a, b) => a.company.localeCompare(b.company)).forEach((priceData) => {
     html += `
       <tr>
-        <td>${priceData.company}</td>
-        <td>${priceData.prices.DKP}</td>
-        <td>${priceData.prices.Ekstra}</td>
-        <td>${priceData.prices.Grup1}</td>
-        <td>${priceData.prices.Grup2}</td>
-        <td>${priceData.prices.Talas}</td>
-        <td>${priceData.currency}</td>
-        <td>${new Date(priceData.updateDate).toLocaleDateString()}</td>
+        <td>${priceData.company ? priceData.company : "-"}</td>
+        <td>${priceData.prices.DKP ? priceData.prices.DKP : "-"}</td>
+        <td>${priceData.prices.Ekstra ? priceData.prices.Ekstra : "-"}</td>
+        <td>${priceData.prices.Grup1 ? priceData.prices.Grup1 : "-"}</td>
+        <td>${priceData.prices.Grup2 ? priceData.prices.Grup2 : "-"}</td>
+        <td>${priceData.prices.Talas ? priceData.prices.Talas : "-"}</td>
+        <td>${priceData.currency ? priceData.currency : "-"}</td>
+        <td>${
+          priceData.updateDate
+            ? new Date(priceData.updateDate).toLocaleDateString()
+            : "-"
+        }</td>
       </tr>
     `;
   });
