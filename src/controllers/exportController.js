@@ -94,20 +94,15 @@ const exportController = {
    *     parameters:
    *       - in: path
    *         name: company
-   *         required: false
-   *         description: Tek bir şirket adı. Birden fazla şirket için "companies" sorgu parametresi kullanılır.
-   *         schema:
-   *           type: string
-   *       - in: query
-   *         name: companies
-   *         description: Virgülle ayrılmış şirket adları listesi.
+   *         required: true
+   *         description: Tek bir şirket adı.
    *         schema:
    *           type: string
    *       - in: query
    *         name: period
-   *         description: YYYY-MM formatında ay bilgisi.
+   *         description: Gün cinsinden dönem (örn: 30, 120). Varsayılan 30.
    *         schema:
-   *           type: string
+   *           type: integer
    *       - in: query
    *         name: currency
    *         description: "İstenilen para birimi (varsayılan: TRY)"
@@ -140,31 +135,21 @@ const exportController = {
   async exportCompanyHistoryHTML(req, res, next) {
     try {
       const currency = req.query.currency?.toUpperCase() || "TRY";
-      const companiesParam = req.query.companies;
       const pathCompany = req.params.company;
-      let companies = [];
-      if (companiesParam) {
-        companies = companiesParam
-          .split(",")
-          .map((c) => capitalize(c.trim()))
-          .filter(Boolean);
-      } else if (pathCompany) {
-        companies = [capitalize(pathCompany)];
-      } else {
+      if (!pathCompany) {
         return res.status(400).json({ error: "Şirket belirtilmelidir." });
       }
 
-      const period = req.query.period;
-      let startDate, endDate;
-      if (period) {
-        const [year, month] = period.split("-").map(Number);
-        startDate = new Date(year, month - 1, 1);
-        endDate = new Date(year, month, 1);
-      } else {
-        const now = new Date();
-        startDate = new Date(now.getFullYear(), now.getMonth(), 1);
-        endDate = new Date(now.getFullYear(), now.getMonth() + 1, 1);
-      }
+      const companies = [capitalize(pathCompany)];
+
+      const periodParam = req.query.period;
+      const parsedDays = parseInt(periodParam, 10);
+      const days = Number.isFinite(parsedDays) && parsedDays > 0 ? parsedDays : 30;
+
+      const endDate = new Date();
+      const startDate = new Date();
+      // Dahil edilecek gün sayısı için bugün dahil son X günü kapsa: X-1 geriye git
+      startDate.setDate(endDate.getDate() - (days - 1));
 
       const prices = await priceService.getHistoricalPricesForPeriod(
         companies,

@@ -67,12 +67,7 @@ const priceService = {
     currency = "TRY"
   ) {
     const start = new Date(startDate);
-    let end = new Date(endDate);
-    const maxEnd = new Date(start);
-    maxEnd.setMonth(maxEnd.getMonth() + 1);
-    if (end > maxEnd) {
-      end = maxEnd;
-    }
+    const end = new Date(endDate);
 
     const results = {};
     await Promise.all(
