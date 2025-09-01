@@ -10,10 +10,7 @@ import puppeteer from "puppeteer";
 
 async function connectDB() {
   try {
-    await mongoose.connect(config.mongodbUri, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    });
+    await mongoose.connect(config.mongodbUri);
     console.log("MongoDB bağlantısı başarılı");
   } catch (error) {
     console.error("MongoDB bağlantı hatası:", error);
