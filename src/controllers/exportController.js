@@ -100,7 +100,7 @@ const exportController = {
    *           type: string
    *       - in: query
    *         name: period
-   *         description: Gün cinsinden dönem (örn: 30, 120). Varsayılan 30.
+   *         description: "Gün cinsinden dönem (örn: 30, 120). Varsayılan 30."
    *         schema:
    *           type: integer
    *       - in: query
