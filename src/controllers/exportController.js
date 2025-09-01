@@ -1,4 +1,6 @@
 import exportService from "../services/exportService.js";
+import priceService from "../services/priceService.js";
+import capitalize from "../utils/capitalize.js";
 
 const exportController = {
   /**
@@ -78,6 +80,86 @@ const exportController = {
   async exportCSV(req, res, next) {
     try {
       res.send("CSV Dışa Aktarma, Yakında...");
+    } catch (error) {
+      next(error);
+    }
+  },
+
+  /**
+   * @swagger
+   * /prices/history/{company}/export/html:
+   *   get:
+   *     summary: Belirli şirketlerin belirtilen dönemdeki fiyat geçmişini HTML olarak dışa aktarır.
+   *     tags: [Export]
+   *     parameters:
+   *       - in: path
+   *         name: company
+   *         required: true
+   *         description: Tek bir şirket adı.
+   *         schema:
+   *           type: string
+   *       - in: query
+   *         name: period
+   *         description: "Gün cinsinden dönem (örn: 30, 120). Varsayılan 30."
+   *         schema:
+   *           type: integer
+   *       - in: query
+   *         name: currency
+   *         description: "İstenilen para birimi (varsayılan: TRY)"
+   *         schema:
+   *           type: string
+   *           enum: [TRY, USD, EUR]
+   *           default: TRY
+   *       - in: query
+   *         name: format
+   *         description: Çıktı formatı (yalnızca html desteklenir)
+   *         schema:
+   *           type: string
+   *           enum: [html]
+   *           default: html
+   *     responses:
+   *       200:
+   *         description: Başarılı istek. HTML formatında fiyat tablosu döner.
+   *         content:
+   *           text/html:
+   *             schema:
+   *               type: string
+   *             example: |
+   *               <table>
+   *                 <tr><th>Şirket</th><th>Tarih</th><th>DKP</th></tr>
+   *                 <tr><td>Şirket A</td><td>01/01/2024</td><td>12000</td></tr>
+   *               </table>
+   *       500:
+   *         description: Sunucu hatası.
+   */
+  async exportCompanyHistoryHTML(req, res, next) {
+    try {
+      const currency = req.query.currency?.toUpperCase() || "TRY";
+      const pathCompany = req.params.company;
+      if (!pathCompany) {
+        return res.status(400).json({ error: "Şirket belirtilmelidir." });
+      }
+
+      const companies = [capitalize(pathCompany)];
+
+      const periodParam = req.query.period;
+      const parsedDays = parseInt(periodParam, 10);
+      const days = Number.isFinite(parsedDays) && parsedDays > 0 ? parsedDays : 30;
+
+      const endDate = new Date();
+      const startDate = new Date();
+      // Dahil edilecek gün sayısı için bugün dahil son X günü kapsa: X-1 geriye git
+      startDate.setDate(endDate.getDate() - (days - 1));
+
+      const prices = await priceService.getHistoricalPricesForPeriod(
+        companies,
+        startDate,
+        endDate,
+        currency
+      );
+      const html = await exportService.getHistoricalPricesHTML(prices);
+      res.setHeader("Content-Type", "text/html");
+      res.send(html);
     } catch (error) {
       next(error);
     }
