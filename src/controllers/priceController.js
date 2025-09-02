@@ -1,5 +1,5 @@
 import priceService from "../services/priceService.js";
-import capitalize from "../utils/capitalize.js";
+import standardize from "../utils/standardize.js";
 
 /**
  * @swagger
@@ -81,7 +81,7 @@ const priceController = {
       const companyName = req.params.company;
       const currency = req.query.currency?.toUpperCase() || "TRY";
       const price = await priceService.getLatestPriceByCompany(
-        capitalize(companyName),
+        standardize(companyName),
         currency
       );
       if (price) {
@@ -153,12 +153,12 @@ const priceController = {
       startDate.setDate(endDate.getDate() - (days - 1));
 
       const result = await priceService.getHistoricalPricesForPeriod(
-        [capitalize(companyName)],
+        [standardize(companyName)],
         startDate,
         endDate,
         currency
       );
-      const history = result[capitalize(companyName)] || [];
+      const history = result[standardize(companyName)] || [];
       res.json(history);
     } catch (error) {
       next(error);

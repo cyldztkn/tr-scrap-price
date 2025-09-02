@@ -1,6 +1,6 @@
 import exportService from "../services/exportService.js";
 import priceService from "../services/priceService.js";
-import capitalize from "../utils/capitalize.js";
+import capitalize from "../utils/standardize.js";
 
 const exportController = {
   /**
