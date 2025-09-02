@@ -11,6 +11,7 @@
     "dotenv": "^16.4.7",
     "eslint": "^9.24.0",
     "express": "^5.1.0",
+    "express-rate-limit": "^8.0.1",
     "fs": "^0.0.1-security",
     "https": "^1.0.0",
     "mongodb": "^6.15.0",
