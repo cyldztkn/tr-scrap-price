@@ -16,6 +16,16 @@ const exportService = {
   },
 };
 
+function formatDateDDMMYYYYOrDash(value) {
+  if (!value) return "-";
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return "-";
+  const day = String(date.getDate()).padStart(2, "0");
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const year = date.getFullYear();
+  return `${day}/${month}/${year}`;
+}
+
 function generateHTMLTable(prices) {
   let html = `
     <table>
@@ -44,11 +54,7 @@ function generateHTMLTable(prices) {
         <td>${priceData.prices.Grup2 ? priceData.prices.Grup2 : "-"}</td>
         <td>${priceData.prices.Talas ? priceData.prices.Talas : "-"}</td>
         <td>${priceData.currency ? priceData.currency : "-"}</td>
-        <td>${
-          priceData.updateDate
-            ? new Date(priceData.updateDate).toLocaleDateString()
-            : "-"
-        }</td>
+        <td>${formatDateDDMMYYYYOrDash(priceData.updateDate)}</td>
       </tr>
     `;
   });
@@ -88,11 +94,7 @@ function generateHistoricalHTMLTable(pricesByCompany) {
           html += `
             <tr>
               <td>${company}</td>
-              <td>${
-                priceData.updateDate
-                  ? new Date(priceData.updateDate).toLocaleDateString()
-                  : "-"
-              }</td>
+              <td>${formatDateDDMMYYYYOrDash(priceData.updateDate)}</td>
               <td>${priceData.prices.DKP ?? "-"}</td>
               <td>${priceData.prices.Ekstra ?? "-"}</td>
               <td>${priceData.prices.Grup1 ?? "-"}</td>
@@ -160,11 +162,7 @@ function generateSingleCompanyHTMLTable(priceData) {
           .map((c) => `<td>${priceData.prices[c.key] ?? "-"}</td>`)
           .join("")}
         <td>${priceData.currency ?? "-"}</td>
-        <td>${
-          priceData.updateDate
-            ? new Date(priceData.updateDate).toLocaleDateString()
-            : "-"
-        }</td>
+        <td>${formatDateDDMMYYYYOrDash(priceData.updateDate)}</td>
       </tr>
   `;
 
