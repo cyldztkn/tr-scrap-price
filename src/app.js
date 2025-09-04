@@ -32,6 +32,12 @@ app.use("/api/v1/meta", metaRoutes);
 app.use("/api/v1/charts", chartRoutes);
 app.use("/api/v1/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec)); // Swagger UI
 
+// 404 yakalayıcı
+app.use((req, res, next) => {
+  res.status(404);
+  next(new Error(`Not Found - ${req.originalUrl}`));
+});
+
 // Hata Yönetimi Middleware
 app.use(errorHandler);
 

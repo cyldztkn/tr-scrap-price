@@ -3,8 +3,7 @@ import config from "./config/config.js";
 import mongoose from "mongoose";
 import cron from "node-cron";
 import runAll from "./crawler/priceCrawler.js";
-import TestPuppeterr from "./crawler/testPuppeteer.js";
-import puppeteer from "puppeteer";
+
 
 // import connectDB from './config/db.js';
 
