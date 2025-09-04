@@ -37,7 +37,6 @@ const priceService = {
   },
 
   async getLatestPriceByCompany(companyName, currency = "TRY") {
-    console.log(companyName);
     const latestPrice = await Price.findOne({ company: companyName }).sort({
       updateDate: -1,
     });
