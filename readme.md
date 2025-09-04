@@ -1,16 +1,23 @@
-# Hurda Fiyatları API - Kullanıcı Dökümantasyonu
+# Türkiye Hurda Fiyatları API - Kullanıcı Dökümantasyonu
 
 Bu API, Türkiye'deki demir-çelik fabrikalarından alınan hurda fiyatlarını ve döviz kuru bilgilerini sağlayan bir RESTful API'dir. API'yi kullanarak en güncel fiyatları, tarihsel verileri, fiyat karşılaştırmalarını ve grafik analizlerini elde edebilirsiniz.
 
 >[!Note]
->Swagger Docs => www.x.com
+>API geliştirme aşamasındadır, mevcut durumu ve ayrıntıları Swagger dökümantasyonundan ve Github Reposundan takip edebilirsiniz.
 
+>[!Note]
+>API tüm isteklerde TRY cinsinden cevap vermektedir. 'Currency' dönüşümü henüz aktif değildir.
+
+>[!tip]
+>**Swagger Dokümantasyonu**: API'nin interaktif dokümantasyonuna erişmek için `/api/v1/api-docs` endpoint'ini ziyaret edin.
 
 ## API Temel Bilgileri
 
-- **Base URL**: `https://your-render-app-url.com/api/v1`
+- **Base URL**: `https://tr-scrap-price.onrender.com/api/v1` (Production)
+- **Local URL**: `http://127.0.0.1:3000/api/v1` (Development)
 - **Format**: JSON ve HTML (bazı endpoint'lerde)
-- **Auth**: API anahtarı gereksizdir, herkes erişebilir.
+- **Auth**: Public API'dır.
+- **Rate Limiting**: API kullanımı rate limiting ile sınırlandırılmıştır.
 
 ---
 ## Endpointler
@@ -90,65 +97,49 @@ Bu API, Türkiye'deki demir-çelik fabrikalarından alınan hurda fiyatlarını 
 - **Açıklama**: Belirtilen şirketin tarihsel fiyat verilerini döndürür
 - **Parametreler**:
     - `company`: Şirket adı (URL-encoded)
-    - `startDate` (opsiyonel): Başlangıç tarihi (YYYY-MM-DD)
-    - `endDate` (opsiyonel): Bitiş tarihi (YYYY-MM-DD), varsayılan: bugün
-    - `interval` (opsiyonel): Veri aralığı (daily, weekly, monthly), varsayılan: daily
+    - `period` (opsiyonel): Gün cinsinden dönem, varsayılan: 30
     - `currency` (opsiyonel): Para birimi (TRY, USD, EUR), varsayılan: TRY
-    - `category` (opsiyonel): Hurda kategorisi (DKP, Ekstra, Grup1, Grup2, Talas)
 - **Örnek Yanıt**:
 
 ```JSON
 {
   "company": "Asil Çelik",
   "currency": "TRY",
-  "category": "DKP",
-  "interval": "daily",
-  "data": [
+  "history": [
     {
-      "date": "2025-03-01T00:00:00Z",
-      "price": 14800
+      "date": "2024-01-01T00:00:00Z",
+      "prices": {
+        "DKP": 11000,
+        "Ekstra": 10500,
+        "Grup1": 10000,
+        "Grup2": 9500,
+        "Talas": 9000
+      }
     },
     {
-      "date": "2025-03-15T00:00:00Z",
-      "price": 14900
-    },
-    {
-      "date": "2025-03-22T00:00:00Z",
-      "price": 15000
+      "date": "2024-01-02T00:00:00Z",
+      "prices": {
+        "DKP": 11200,
+        "Ekstra": 10700,
+        "Grup1": 10200,
+        "Grup2": 9700,
+        "Talas": 9200
+      }
     }
   ]
 }
 ```
 
-### Karşılaştırmalı Fiyat Tablosu
+### Şirket Tarihsel Verilerini HTML Olarak Dışa Aktarma
 
-`GET /api/v1/prices/comparison`
+`GET /api/v1/prices/history/:company/export/html`
 
-- **Açıklama**: Tüm şirketlerin en güncel fiyatlarını karşılaştırmalı tablo formatında döndürür
+- **Açıklama**: Belirli bir şirketin tarihsel fiyat verilerini HTML formatında döndürür
 - **Parametreler**:
+    - `company`: Şirket adı (URL-encoded)
+    - `period` (opsiyonel): Gün cinsinden dönem, varsayılan: 30
     - `currency` (opsiyonel): Para birimi (TRY, USD, EUR), varsayılan: TRY
-    - `format` (opsiyonel): Yanıt formatı (json, html), varsayılan: json
-- **Örnek Yanıt (JSON)**:
-
-```JSON
-{
-  "timestamp": "2025-04-07T12:00:00Z",
-  "currency": "TRY",
-  "categories": ["DKP", "Ekstra", "Grup1", "Grup2", "Talas"],
-  "companies": [
-    {
-      "name": "Asil Çelik",
-      "updateDate": "2025-03-22T00:00:00Z",
-      "prices": [15000, 14500, 14000, 13500, 13000]
-    },
-    {
-      "name": "Çolakoğlu",
-      "updateDate": "2025-03-23T00:00:00Z",
-      "prices": [15200, 14700, 14200, 13700, 13200]
-    }
-  ]
-}
-```
+- **Yanıt**: HTML formatında tablo
 
 ### Kategori Bazlı Fiyat Analizi
 
@@ -178,34 +169,25 @@ Bu API, Türkiye'deki demir-çelik fabrikalarından alınan hurda fiyatlarını 
   ]
 }
 ```
-## Grafik Veri Endpointleri
+## Grafik Veri Endpointleri (Geliştirme Aşamasında)
+
+>[!Warning]
+>Bu endpoint'ler henüz geliştirme aşamasındadır ve şu anda sadece placeholder mesajları döndürür.
 
 ### Şirket Bazlı Trend Verileri
 
 `GET /api/v1/charts/trend/:company`
 
 - **Açıklama**: Belirli bir şirketin zaman içindeki fiyat trendlerini grafik verisi olarak döndürür
+- **Durum**: Geliştirme aşamasında
 - **Parametreler**:
     - `company`: Şirket adı (URL-encoded)
-    - `startDate` (opsiyonel): Başlangıç tarihi (YYYY-MM-DD), varsayılan: 1 yıl önce
-    - `endDate` (opsiyonel): Bitiş tarihi (YYYY-MM-DD), varsayılan: bugün
+    - `period` (opsiyonel): Gün cinsinden dönem, varsayılan: 30
     - `currency` (opsiyonel): Para birimi (TRY, USD, EUR), varsayılan: TRY
-- **Örnek Yanıt**:
+- **Şu Anki Yanıt**:
 ```JSON
 {
-  "company": "Asil Çelik",
-  "currency": "TRY",
-  "labels": ["2024-04", "2024-05", "2024-06", "..."],
-  "datasets": [
-    {
-      "label": "DKP",
-      "data": [12000, 12300, 12600, "..."]
-    },
-    {
-      "label": "Ekstra",
-      "data": [11500, 11800, 12100, "..."]
-    }
-  ]
+  "message": "Şirket Trend Grafiği Verileri: [company_name], Yakında..."
 }
 ```
 
@@ -214,28 +196,15 @@ Bu API, Türkiye'deki demir-çelik fabrikalarından alınan hurda fiyatlarını 
 `GET /api/v1/charts/category/:category/comparison`
 
 - **Açıklama**: Belirli bir kategoride, şirketler arası fiyat karşılaştırmasını grafik verisi olarak döndürür
+- **Durum**: Geliştirme aşamasında
 - **Parametreler**:
     - `category`: Hurda kategorisi (DKP, Ekstra, Grup1, Grup2, Talas)
-    - `startDate` (opsiyonel): Başlangıç tarihi (YYYY-MM-DD), varsayılan: 3 ay önce
-    - `endDate` (opsiyonel): Bitiş tarihi (YYYY-MM-DD), varsayılan: bugün
+    - `period` (opsiyonel): Gün cinsinden dönem, varsayılan: 30
     - `currency` (opsiyonel): Para birimi (TRY, USD, EUR), varsayılan: TRY
-- **Örnek Yanıt**:
-
+- **Şu Anki Yanıt**:
 ```JSON
 {
-  "category": "DKP",
-  "currency": "TRY",
-  "labels": ["2025-01", "2025-02", "2025-03", "2025-04"],
-  "datasets": [
-    {
-      "label": "Asil Çelik",
-      "data": [14000, 14300, 14600, 15000]
-    },
-    {
-      "label": "Çolakoğlu",
-      "data": [14100, 14400, 14900, 15200]
-    }
-  ]
+  "message": "Kategori Karşılaştırma Grafiği Verileri: [category], Yakında..."
 }
 ```
 ## Veri Dışa Aktarma Endpointleri
@@ -254,12 +223,8 @@ Bu API, Türkiye'deki demir-çelik fabrikalarından alınan hurda fiyatlarını 
 `GET /api/v1/export/csv`
 
 - **Açıklama**: Fiyat verilerini CSV formatında dışa aktarır
-- **Parametreler**:
-    - `startDate` (opsiyonel): Başlangıç tarihi
-    - `endDate` (opsiyonel): Bitiş tarihi
-    - `company` (opsiyonel): Belirli bir şirket
-    - `currency` (opsiyonel): Para birimi (TRY, USD, EUR), varsayılan: TRY
-- **Yanıt**: CSV formatında dosya
+- **Durum**: Geliştirme aşamasında
+- **Şu Anki Yanıt**: "CSV Dışa Aktarma, Yakında..."
 
 ## Metaveri Endpointleri
 
@@ -290,16 +255,34 @@ Bu API, Türkiye'deki demir-çelik fabrikalarından alınan hurda fiyatlarını 
 
 # EndPoint Tablo
 
-| HTTP Metodu | Endpoint                                       | Açıklama                                                                              | Parametreler                                                                                                                                                                   | Dönüş Formatı |
-| ----------- | ---------------------------------------------- | ------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------- |
-| **GET**     | `/api/v1/prices/latest`                        | Tüm şirketlerin en güncel hurda fiyatlarını döndürür                                  | `currency` (TRY/USD/EUR)<br>`category` (DKP/Ekstra/Grup1/Grup2/Talas)                                                                                                          | JSON          |
-| **GET**     | `/api/v1/prices/latest/:company`               | Belirtilen şirketin en güncel fiyatlarını döndürür                                    | `company` (şirket adı)<br>`currency` (TRY/USD/EUR)                                                                                                                             | JSON          |
-| **GET**     | `/api/v1/prices/history/:company`              | Bir şirketin tarihsel fiyat verilerini döndürür                                       | `company` (şirket adı)<br>`startDate` (YYYY-MM-DD)<br>`endDate` (YYYY-MM-DD)<br>`interval` (daily/weekly/monthly)<br>`currency` (TRY/USD/EUR)<br>`category` (hurda kategorisi) | JSON          |
-| **GET**     | `/api/v1/prices/comparison`                    | Tüm şirketlerin fiyatlarını karşılaştırmalı tablo olarak döndürür                     | `currency` (TRY/USD/EUR)<br>`format` (json/html)                                                                                                                               | JSON/HTML     |
-| **GET**     | `/api/v1/prices/category/:category`            | Belirli bir hurda kategorisi için tüm şirketlerin fiyatlarını döndürür                | `category` (hurda kategorisi)<br>`currency` (TRY/USD/EUR)                                                                                                                      | JSON          |
-| **GET**     | `/api/v1/charts/trend/:company`                | Bir şirketin zaman içindeki fiyat trendlerini grafik verisi olarak döndürür           | `company` (şirket adı)<br>`startDate` (YYYY-MM-DD)<br>`endDate` (YYYY-MM-DD)<br>`currency` (TRY/USD/EUR)                                                                       | JSON          |
-| **GET**     | `/api/v1/charts/category/:category/comparison` | Bir kategoride, şirketler arası fiyat karşılaştırmasını grafik verisi olarak döndürür | `category` (hurda kategorisi)<br>`startDate` (YYYY-MM-DD)<br>`endDate` (YYYY-MM-DD)<br>`currency` (TRY/USD/EUR)                                                                | JSON          |
-| **GET**     | `/api/v1/export/html`                          | Tüm güncel fiyat verilerini HTML tablo formatında döndürür                            | `currency` (TRY/USD/EUR)                                                                                                                                                       | HTML          |
-| **GET**     | `/api/v1/export/csv`                           | Fiyat verilerini CSV formatında dışa aktarır                                          | `startDate` (YYYY-MM-DD)<br>`endDate` (YYYY-MM-DD)<br>`company` (şirket adı)<br>`currency` (TRY/USD/EUR)                                                                       | CSV           |
-| **GET**     | `/api/v1/meta/companies`                       | Sistemdeki tüm şirketlerin listesini döndürür                                         | -                                                                                                                                                                              | JSON          |
-| **GET**     | `/api/v1/meta/stats`                           | API kullanım istatistiklerini döndürür                                                | -                                                                                                                                                                              | JSON          |
+| HTTP Metodu | Endpoint                                       | Açıklama                                                                              | Parametreler                                                                                                                                                                   | Dönüş Formatı | Durum |
+| ----------- | ---------------------------------------------- | ------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------- | ----- |
+| **GET**     | `/api/v1/prices/latest`                        | Tüm şirketlerin en güncel hurda fiyatlarını döndürür                                  | `currency` (TRY/USD/EUR)                                                                                                                                                       | JSON          | ✅ Aktif |
+| **GET**     | `/api/v1/prices/latest/:company`               | Belirtilen şirketin en güncel fiyatlarını döndürür                                    | `company` (şirket adı)<br>`currency` (TRY/USD/EUR)                                                                                                                             | JSON          | ✅ Aktif |
+| **GET**     | `/api/v1/prices/history/:company`              | Bir şirketin tarihsel fiyat verilerini döndürür                                       | `company` (şirket adı)<br>`period` (gün sayısı)<br>`currency` (TRY/USD/EUR)                                                                                                    | JSON          | ✅ Aktif |
+| **GET**     | `/api/v1/prices/history/:company/export/html`  | Bir şirketin tarihsel verilerini HTML formatında döndürür                             | `company` (şirket adı)<br>`period` (gün sayısı)<br>`currency` (TRY/USD/EUR)                                                                                                    | HTML          | ✅ Aktif |
+| **GET**     | `/api/v1/prices/category/:category`            | Belirli bir hurda kategorisi için tüm şirketlerin fiyatlarını döndürür                | `category` (hurda kategorisi)<br>`currency` (TRY/USD/EUR)                                                                                                                      | JSON          | ✅ Aktif |
+| **GET**     | `/api/v1/charts/trend/:company`                | Bir şirketin zaman içindeki fiyat trendlerini grafik verisi olarak döndürür           | `company` (şirket adı)<br>`period` (gün sayısı)<br>`currency` (TRY/USD/EUR)                                                                                                    | JSON          | 🚧 Geliştirme |
+| **GET**     | `/api/v1/charts/category/:category/comparison` | Bir kategoride, şirketler arası fiyat karşılaştırmasını grafik verisi olarak döndürür | `category` (hurda kategorisi)<br>`period` (gün sayısı)<br>`currency` (TRY/USD/EUR)                                                                                             | JSON          | 🚧 Geliştirme |
+| **GET**     | `/api/v1/export/html`                          | Tüm güncel fiyat verilerini HTML tablo formatında döndürür                            | `currency` (TRY/USD/EUR)                                                                                                                                                       | HTML          | ✅ Aktif |
+| **GET**     | `/api/v1/export/csv`                           | Fiyat verilerini CSV formatında dışa aktarır                                          | -                                                                                                                                                                              | CSV           | 🚧 Geliştirme |
+| **GET**     | `/api/v1/meta/companies`                       | Sistemdeki tüm şirketlerin listesini döndürür                                         | -                                                                                                                                                                              | JSON          | ✅ Aktif |
+| **GET**     | `/api/v1/meta/stats`                           | API kullanım istatistiklerini döndürür                                                | -                                                                                                                                                                              | JSON          | ✅ Aktif |
+| **GET**     | `/api/v1/api-docs`                             | Swagger API dokümantasyonu                                                            | -                                                                                                                                                                              | HTML          | ✅ Aktif |
+
+## Teknik Detaylar
+
+### Veri Yapısı
+- **Hurda Kategorileri**: DKP, Ekstra, Grup1, Grup2, Talas
+- **Para Birimleri**: TRY (varsayılan), USD, EUR
+- **Veri Güncelleme**: Günlük otomatik güncelleme (Cron job: 07:00)
+
+### Rate Limiting
+- **Genel Limit**: Tüm endpoint'ler için uygulanır
+- **Ağır İşlemler**: Export ve Charts endpoint'leri için daha sıkı limitler
+
+### Hata Kodları
+- **200**: Başarılı istek
+- **404**: Veri bulunamadı
+- **429**: Rate limit aşıldı
+- **500**: Sunucu hatası
