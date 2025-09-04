@@ -38,7 +38,7 @@ export const globalLimiter = rateLimit({
 
 export const heavyLimiter = rateLimit({
   windowMs: 60 * 1000,
-  limit: 10,
+  limit: 50,
   standardHeaders: "draft-7",
   legacyHeaders: false,
   message: { error: "Too many requests on heavy endpoint" },
