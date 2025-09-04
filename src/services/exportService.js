@@ -6,6 +6,11 @@ const exportService = {
     return generateHTMLTable(prices);
   },
 
+  async getLatestPriceHTMLForCompany(companyName, currency = "TRY") {
+    const price = await priceService.getLatestPriceByCompany(companyName, currency);
+    return generateSingleCompanyHTMLTable(price);
+  },
+
   async getHistoricalPricesHTML(pricesByCompany) {
     return generateHistoricalHTMLTable(pricesByCompany);
   },
@@ -98,6 +103,70 @@ function generateHistoricalHTMLTable(pricesByCompany) {
           `;
         });
     });
+
+  html += `
+      </tbody>
+    </table>
+  `;
+
+  return html;
+}
+
+function generateSingleCompanyHTMLTable(priceData) {
+  if (!priceData) {
+    return `
+    <table>
+      <thead>
+        <tr>
+          <th>Şirket</th>
+          <th>Bilgi</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>-</td>
+          <td>Kayıt bulunamadı</td>
+        </tr>
+      </tbody>
+    </table>
+    `;
+  }
+
+  const visibleColumns = [
+    { key: "DKP", label: "DKP" },
+    { key: "Ekstra", label: "Ekstra" },
+    { key: "Grup1", label: "Grup1" },
+    { key: "Grup2", label: "Grup2" },
+    { key: "Talas", label: "Talas" },
+  ].filter((col) => priceData.prices && priceData.prices[col.key] != null);
+
+  let html = `
+    <table>
+      <thead>
+        <tr>
+          <th>Şirket</th>
+          ${visibleColumns.map((c) => `<th>${c.label}</th>`).join("")}
+          <th>Para Birimi</th>
+          <th>Güncelleme Tarihi</th>
+        </tr>
+      </thead>
+      <tbody>
+  `;
+
+  html += `
+      <tr>
+        <td>${priceData.company ?? "-"}</td>
+        ${visibleColumns
+          .map((c) => `<td>${priceData.prices[c.key] ?? "-"}</td>`)
+          .join("")}
+        <td>${priceData.currency ?? "-"}</td>
+        <td>${
+          priceData.updateDate
+            ? new Date(priceData.updateDate).toLocaleDateString()
+            : "-"
+        }</td>
+      </tr>
+  `;
 
   html += `
       </tbody>

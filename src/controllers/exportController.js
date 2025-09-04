@@ -85,6 +85,23 @@ const exportController = {
     }
   },
 
+  async exportCompanyLatestHTML(req, res, next) {
+    try {
+      const currency = req.query.currency?.toUpperCase() || "TRY";
+      const pathCompany = req.params.company;
+      if (!pathCompany) {
+        return res.status(400).json({ error: "Şirket belirtilmelidir." });
+      }
+
+      const company = capitalize(pathCompany);
+      const html = await exportService.getLatestPriceHTMLForCompany(company, currency);
+      res.setHeader("Content-Type", "text/html");
+      res.send(html);
+    } catch (error) {
+      next(error);
+    }
+  },
+
   /**
    * @swagger
    * /prices/history/{company}/export/html:
