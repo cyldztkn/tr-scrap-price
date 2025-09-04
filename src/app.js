@@ -14,7 +14,7 @@ import { globalLimiter, heavyLimiter } from "./middlewares/rateLimit.js";
 
 const app = express();
 
-// Middleware'ler
+// Middleware
 app.set("trust proxy", true);
 app.use(cors()); // CORS'u etkinleştir
 app.use(express.json()); // JSON istek gövdelerini ayrıştır
@@ -25,20 +25,20 @@ app.use(globalLimiter);
 app.use("/api/v1/export", heavyLimiter, exportRoutes);
 app.use("/api/v1/charts", heavyLimiter, chartRoutes);
 
-// Rotalar
+// Routes
 app.use("/api/v1/prices", priceRoutes);
 app.use("/api/v1/export", exportRoutes);
 app.use("/api/v1/meta", metaRoutes);
 app.use("/api/v1/charts", chartRoutes);
 app.use("/api/v1/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec)); // Swagger UI
 
-// 404 yakalayıcı
+// 404 Handler
 app.use((req, res, next) => {
   res.status(404);
   next(new Error(`Not Found - ${req.originalUrl}`));
 });
 
-// Hata Yönetimi Middleware
+// Error Handler
 app.use(errorHandler);
 
 export default app;

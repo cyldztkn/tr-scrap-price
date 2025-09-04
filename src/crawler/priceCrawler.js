@@ -6,7 +6,7 @@ import mongoose from "mongoose";
 import Price from "../models/Price.js";
 import config from "../config/config.js";
 
-// MongoDB bağlantı fonksiyonu
+// MongoDB connection 
 async function connectDB() {
   try {
     await mongoose.connect(config.mongodbUri, {
@@ -20,7 +20,7 @@ async function connectDB() {
   }
 }
 
-// Genel HTTPS Agent (sertifika kontrolü yapılmadan)
+// General HTTPS Agent (no certificate check)
 const httpsAgent = new https.Agent({
   rejectUnauthorized: false,
 });
@@ -28,7 +28,7 @@ const httpsAgent = new https.Agent({
 // Crawler test export directiory
 let exportFolder = "./src/crawler/testExports/";
 
-// Genel dönüşüm fonksiyonu: MongoDB şemasına uygun obje oluşturur.
+// General conversion function: Create object according to MongoDB schema
 function createPriceDocument(company, pricesObj) {
   return {
     company,
@@ -40,16 +40,9 @@ function createPriceDocument(company, pricesObj) {
 }
 
 // ------------------------------
-// Mapping Fonksiyonları
+// Mapping Functions
 // ------------------------------
 
-// 1. KARDEMİR mapping (kaynak: kardemir_fiyat.json)
-// Kaynak veride 6 satır var; biz için kullanacağımızlar:
-//   • DKP: "DKP Hurda"
-//   • Ekstra: "Extra"
-//   • Grup1: "1.Sınıf"
-//   • Grup2: "2.Sınıf"
-//   • Talas: yok, null
 function mapKardemir(pricesArr) {
   const result = {
     DKP: null,
@@ -60,7 +53,6 @@ function mapKardemir(pricesArr) {
   };
   pricesArr.forEach((item) => {
     const mat = item.material.toLowerCase();
-    // Fiyatı sadece rakamlara çeviriyoruz (örneğin "14000")
     const value = parseInt(item.price.replace(/\D/g, ""), 10);
     if (mat.includes("dkp hurda")) {
       result.DKP = value;
@@ -71,15 +63,13 @@ function mapKardemir(pricesArr) {
     } else if (mat.includes("2.sınıf")) {
       result.Grup2 = value;
     }
-    // "Özel Ekstra" ve "Büyük Parça İskontosu" gibi satırlar, şemamızda yer almadığından atlıyoruz.
   });
   return result;
 }
 
 // 2. İsdemir mapping
 // Kaynak: isdemir_fiyat.json
-// Kullanılanlar:
-//   • DKP, Ekstra, 1.Grup, 2.Grup
+
 function mapIsdemir(pricesArr) {
   const result = {
     DKP: null,
@@ -100,13 +90,11 @@ function mapIsdemir(pricesArr) {
     } else if (mat.includes("2.grup")) {
       result.Grup2 = value;
     }
-    // "Bonus" ve "Makas" gibi ifadeler şemaya uymadığından atlanır.
   });
   return result;
 }
 
 // 3. Çolakoğlu mapping
-// Kaynak: colakoglu_fiyat.json – burada fiyatlar alanı "name" ile veriliyor.
 function mapColakoglu(pricesArr) {
   const result = {
     DKP: null,
@@ -134,8 +122,6 @@ function mapColakoglu(pricesArr) {
 }
 
 // 4. Erdemir mapping
-// Kaynak: Erdemir_fiyat.json – burada her obje "old_price" ve "new_price" içeriyor,
-// biz "new_price" değerini kullanıyoruz.
 function mapErdemir(pricesArr) {
   const result = {
     DKP: null,
@@ -163,7 +149,6 @@ function mapErdemir(pricesArr) {
 }
 
 // 5. Asil Çelik mapping
-// Kaynak: asilCelik_fiyat.json – burada "Bonus" da var, ancak şemamızda yer yok.
 function mapAsilCelik(pricesArr) {
   const result = {
     DKP: null,
@@ -182,14 +167,12 @@ function mapAsilCelik(pricesArr) {
     } else if (mat.includes("1. sınıf")) {
       result.Grup1 = value;
     }
-    // "Bonus" yok sayılıyor.
   });
   return result;
 }
 
 // 6. Kromancelik mapping
-// Kaynak: kromancelik_fiyat.json – burada farklı materyaller var; biz şemamız için
-// sadece DKP, EKSTRA, 1_SINIF, 2_SINIF ve TALAS'ı kullanıyoruz.
+
 function mapKromancelik(pricesArr) {
   const result = {
     DKP: null,
@@ -217,7 +200,7 @@ function mapKromancelik(pricesArr) {
 }
 
 // ------------------------------
-// Fonksiyonlar: Her şirketin verisini çekme ve dönüştürme
+// Functions: Get and transform data for each company
 // ------------------------------
 
 // KARDEMİR
@@ -242,7 +225,6 @@ async function crawlKardemir() {
       waitUntil: "networkidle2",
     });
 
-    // İlgili container ve alt öğelerin yüklenmesini bekleyelim:
     await page.waitForSelector("div.middlecontent", { timeout: 10000 });
     await page.waitForSelector("div.middlecontent h4.ng-binding", {
       timeout: 10000,
@@ -251,18 +233,15 @@ async function crawlKardemir() {
       timeout: 10000,
     });
 
-    // Container içerisindeki tarih ve fiyat listesini çekelim.
     const result = await page.evaluate(() => {
       const container = document.querySelector("div.middlecontent");
       let dateText = "";
       let prices = [];
       if (container) {
-        // Tarih: <h4 class="ng-binding">26/03/2025</h4>
         const dateEl = container.querySelector("h4.ng-binding");
         if (dateEl) {
           dateText = dateEl.innerText.trim();
         }
-        // Fiyat listesinin bulunduğu alan: <kar ...><ul><li>...</li></ul></kar>
         const karEl = container.querySelector("kar.ng-binding");
         if (karEl) {
           const ulEl = karEl.querySelector("ul");
@@ -274,7 +253,6 @@ async function crawlKardemir() {
               if (parts.length >= 2) {
                 const material = parts[0].trim();
                 let priceText = parts[1].trim();
-                // "TL", "TL/Ton" veya "/Ton" ifadelerini kaldırıp, noktaları silerek numerik değeri elde ediyoruz.
                 priceText = priceText.replace(/TL\/Ton|TL|\/Ton/g, "").trim();
                 priceText = priceText.replace(/\./g, "");
                 prices.push({ material, price: priceText });
@@ -288,7 +266,6 @@ async function crawlKardemir() {
 
     await browser.close();
 
-    // Gelen tarih formatı "26/03/2025" ise, nokta ayracı ile "26.03.2025" formatına çevirelim.
     let formattedDate = result.date;
     if (result.date.includes("/")) {
       const parts = result.date.split("/");
@@ -298,13 +275,12 @@ async function crawlKardemir() {
     }
     const description = `Fiyatlar ${formattedDate} tarihinden itibaren geçerli fiyatlardır.`;
 
-    // Daha önce tanımlı mapKardemir fonksiyonunu kullanarak, ham fiyat listesini MongoDB şemasına uygun hale getiriyoruz.
     const mapped = mapKardemir(result.prices);
     const doc = createPriceDocument("Kardemir", mapped);
     const finalDoc = {
       ...doc,
       description,
-      raw: result, // isteğe bağlı: ham veriyi ekliyoruz
+      raw: result,
     };
 
     fs.writeFileSync(
@@ -312,7 +288,7 @@ async function crawlKardemir() {
       JSON.stringify(finalDoc, null, 2),
       "utf-8"
     );
-    // MongoDB'ye yeni kayıt olarak ekle
+    // Add new record to MongoDB
     await Price.create(finalDoc);
     console.log("Kardemir verisi MongoDB'ye kaydedildi.");
   } catch (error) {
@@ -321,7 +297,7 @@ async function crawlKardemir() {
   }
 }
 
-// İsdemir (puppeteer ile)
+// Isdemir (puppeteer)
 async function scrapeIsdemir() {
   const browser = await puppeteer.launch({
     headless: true,
@@ -368,7 +344,6 @@ async function scrapeIsdemir() {
       JSON.stringify(doc, null, 2),
       "utf-8"
     );
-    // MongoDB'ye yeni kayıt olarak ekle
     await Price.create(doc);
     console.log("Isdemir verisi MongoDB'ye kaydedildi.");
   } catch (error) {
@@ -410,7 +385,7 @@ async function fetchColakoglu() {
       JSON.stringify(doc, null, 2),
       "utf-8"
     );
-    // MongoDB'ye yeni kayıt olarak ekle
+    // Add new record to MongoDB
     await Price.create(doc);
     console.log("Colakoglu verisi MongoDB'ye kaydedildi.");
   } catch (err) {
@@ -478,7 +453,7 @@ async function scrapeErdemir() {
       JSON.stringify(doc, null, 2),
       "utf-8"
     );
-    // MongoDB'ye yeni kayıt olarak ekle
+    // Add new record to MongoDB
     await Price.create(doc);
     console.log("Erdemir verisi MongoDB'ye kaydedildi.");
   } catch (error) {
@@ -536,7 +511,7 @@ async function scrapeAsilCelik() {
       JSON.stringify(doc, null, 2),
       "utf-8"
     );
-    // MongoDB'ye yeni kayıt olarak ekle
+    // Add new record to MongoDB
     await Price.create(doc);
     console.log("Asil Çelik verisi MongoDB'ye kaydedildi.");
   } catch (error) {
@@ -602,7 +577,7 @@ async function scrapeKromancelik() {
       JSON.stringify(doc, null, 2),
       "utf-8"
     );
-    // MongoDB'ye yeni kayıt olarak ekle
+    // Add new record to MongoDB
     await Price.create(doc);
     console.log("Kromancelik verisi MongoDB'ye kaydedildi.");
   } catch (error) {
@@ -612,15 +587,15 @@ async function scrapeKromancelik() {
 }
 
 // ------------------------------
-// Tüm işlemleri çalıştırma
+// Run all crawlers
 // ------------------------------
 export default async function runAll() {
   try {
-    // MongoDB'ye bağlan
+    // Connect to MongoDB
     await connectDB();
     console.log("MongoDB bağlantısı kuruldu, crawler işlemleri başlatılıyor...");
 
-    // Crawler fonksiyonlarını sırayla çalıştır
+    // Run crawlers sequentially
     const crawlers = [
       { name: "Kardemir", func: crawlKardemir },
       { name: "Colakoglu", func: fetchColakoglu },
@@ -637,7 +612,7 @@ export default async function runAll() {
         console.log(`${crawler.name} crawler işlemi başarıyla tamamlandı.`);
       } catch (error) {
         console.error(`${crawler.name} crawler işleminde hata oluştu:`, error.message);
-        // Hata oluşsa bile diğer crawler'ların çalışmasına devam et
+        // Continue even if there is an error
         continue;
       }
     }

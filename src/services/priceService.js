@@ -4,7 +4,7 @@ import convertCurrency from "../utils/currencyConverter.js";
 
 const priceService = {
   async getLatestPrices(currency = "TRY") {
-    // Tüm şirketlerin listesi
+    // All companies list
     const companies = [
       "Kardemir",
       "Isdemir",
@@ -14,7 +14,7 @@ const priceService = {
       "Kromancelik"
     ];
 
-    // Her şirket için en son fiyat kaydını al
+    // For each company, get the latest price record
     const latestPrices = await Promise.all(
       companies.map(async (company) => {
         const latestPrice = await Price.findOne({ company })
@@ -24,7 +24,7 @@ const priceService = {
       })
     );
 
-    // Null olmayan sonuçları filtrele ve para birimi dönüşümünü uygula
+    // Filter out null results and apply currency conversion
     const convertedPrices = await Promise.all(
       latestPrices
         .filter(price => price !== null)
@@ -51,7 +51,7 @@ const priceService = {
     const historicalPrices = await Price.find({ company: companyName }).sort({
       updateDate: -1,
     });
-    // Promise.all ile tüm dönüşümleri bekle
+    // Wait for all conversions
     const convertedPrices = await Promise.all(
       historicalPrices.map(async (priceDoc) => {
         return await this.convertPriceCurrency(priceDoc.toObject(), currency);
@@ -95,7 +95,7 @@ const priceService = {
       company: priceDoc.company,
       date: priceDoc.updateDate,
       price: priceDoc.prices[category],
-      currency: "TRY", // Veritabanında TRY olarak saklandığını varsayalım
+      currency: "TRY", 
     }));
     return categoryPrices.map((priceData) => ({
       ...priceData,
@@ -121,7 +121,7 @@ const priceService = {
     for (const category in priceDoc.prices) {
       convertedPrices[category] = convertCurrency(
         priceDoc.prices[category],
-        "TRY", // Veritabanında TRY olarak saklandığını varsayalım
+        "TRY", 
         targetCurrency,
         priceDoc.exchangeRates
       );

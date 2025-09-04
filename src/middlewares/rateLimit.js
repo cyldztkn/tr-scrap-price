@@ -11,10 +11,10 @@ function logToFile(data) {
 export const globalLimiter = rateLimit({
   windowMs: 60 * 1000,
   limit: 100,
-  standardHeaders: "draft-7", // RateLimit-* başlıkları
-  legacyHeaders: false, // X-RateLimit-* kapalı
+  standardHeaders: "draft-7", 
+  legacyHeaders: false, 
   message: { error: "Too many requests" },
-  skip: (req) => req.originalUrl.startsWith("/api/v1/api-docs"), // Swagger hariç
+  skip: (req) => req.originalUrl.startsWith("/api/v1/api-docs"), 
   keyGenerator: (req) => ipKeyGenerator(req.ip),
   handler: (req, res /*, next*/) => {
     const info = req.rateLimit;

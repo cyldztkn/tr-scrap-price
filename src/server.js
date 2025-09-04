@@ -4,9 +4,7 @@ import mongoose from "mongoose";
 import cron from "node-cron";
 import runAll from "./crawler/priceCrawler.js";
 
-
 // import connectDB from './config/db.js';
-
 async function connectDB() {
   try {
     await mongoose.connect(config.mongodbUri);
@@ -19,7 +17,7 @@ async function connectDB() {
 
 const startServer = async () => {
   try {
-    await connectDB(); // Veritabanına bağlan
+    await connectDB(); // Connect to MongoDB
     app.listen(config.port, () => {
       console.log(`Server is running on port ${config.port}`);
     });
@@ -32,16 +30,5 @@ cron.schedule("0 7 * * *", async () => {
   console.log("⏰ Cron job: 06:00’da runAll() başlıyor...");
   await runAll();
 });
-
-// Puppeteer Test
-
-// cron.schedule("*/30 * * * * *", async () => {
-//   console.log(
-//     `👀 [${new Date().toLocaleString("tr-TR", {
-//       timeZone: "Europe/Istanbul",
-//     })}] Puppeteer Testi Başladı`
-//   );
-//   await TestPuppeterr();
-// });
 
 startServer();
