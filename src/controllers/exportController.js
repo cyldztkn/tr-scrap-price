@@ -85,6 +85,37 @@ const exportController = {
     }
   },
 
+  /**
+   * @swagger
+   * /export/html/{company}:
+   *   get:
+   *     summary: Belirli bir şirketin en güncel fiyatlarını HTML olarak dışa aktarır.
+   *     description: Yalnızca istenilen şirketin en güncel fiyatları döner. Tabloda boş olan kategoriler gösterilmez.
+   *     tags: [Export]
+   *     parameters:
+   *       - $ref: '#/components/parameters/Company'
+   *       - $ref: '#/components/parameters/Currency'
+   *     responses:
+   *       200:
+   *         description: Başarılı istek. HTML formatında tek satırlık fiyat tablosu döner.
+   *         content:
+   *           text/html:
+   *             schema:
+   *               type: string
+   *             example: |
+   *               <table>
+   *                 <thead>
+   *                   <tr><th>Şirket</th><th>DKP</th><th>Para Birimi</th><th>Güncelleme Tarihi</th></tr>
+   *                 </thead>
+   *                 <tbody>
+   *                   <tr><td>Kardemir</td><td>12000</td><td>TRY</td><td>01/01/2025</td></tr>
+   *                 </tbody>
+   *               </table>
+   *       400:
+   *         description: Geçersiz istek. Şirket adı belirtilmemiş.
+   *       500:
+   *         description: Sunucu hatası.
+   */
   async exportCompanyLatestHTML(req, res, next) {
     try {
       const currency = req.query.currency?.toUpperCase() || "TRY";

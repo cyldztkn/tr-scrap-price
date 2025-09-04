@@ -218,6 +218,17 @@ Bu API, Türkiye'deki demir-çelik fabrikalarından alınan hurda fiyatlarını 
     - `currency` (opsiyonel): Para birimi (TRY, USD, EUR), varsayılan: TRY
 - **Yanıt**: HTML formatında tablo
 
+### Belirli Şirketi HTML Tablo Olarak Dışa Aktarma
+
+`GET /api/v1/export/html/:company`
+
+- **Açıklama**: Yalnızca belirtilen şirketin en güncel fiyatlarını HTML tablo formatında döndürür.
+- **Not**: Tabloda boş olan kategoriler başlık ve hücre olarak gösterilmez.
+- **Parametreler**:
+    - `company`: Şirket adı (slug veya ad; örn: `kardemir`, `asil-celik`)
+    - `currency` (opsiyonel): Para birimi (TRY, USD, EUR), varsayılan: TRY
+- **Yanıt**: HTML formatında tek satırlık tablo
+
 ### CSV Olarak Dışa Aktarma
 
 `GET /api/v1/export/csv`
@@ -265,6 +276,7 @@ Bu API, Türkiye'deki demir-çelik fabrikalarından alınan hurda fiyatlarını 
 | **GET**     | `/api/v1/charts/trend/:company`                | Bir şirketin zaman içindeki fiyat trendlerini grafik verisi olarak döndürür           | `company` (şirket adı)<br>`period` (gün sayısı)<br>`currency` (TRY/USD/EUR)                                                                                                    | JSON          | 🚧 Geliştirme |
 | **GET**     | `/api/v1/charts/category/:category/comparison` | Bir kategoride, şirketler arası fiyat karşılaştırmasını grafik verisi olarak döndürür | `category` (hurda kategorisi)<br>`period` (gün sayısı)<br>`currency` (TRY/USD/EUR)                                                                                             | JSON          | 🚧 Geliştirme |
 | **GET**     | `/api/v1/export/html`                          | Tüm güncel fiyat verilerini HTML tablo formatında döndürür                            | `currency` (TRY/USD/EUR)                                                                                                                                                       | HTML          | ✅ Aktif |
+| **GET**     | `/api/v1/export/html/:company`                 | Belirtilen şirketin en güncel verilerini HTML tablo formatında döndürür               | `company` (şirket adı veya slug)<br>`currency` (TRY/USD/EUR)                                                                                                                    | HTML          | ✅ Aktif |
 | **GET**     | `/api/v1/export/csv`                           | Fiyat verilerini CSV formatında dışa aktarır                                          | -                                                                                                                                                                              | CSV           | 🚧 Geliştirme |
 | **GET**     | `/api/v1/meta/companies`                       | Sistemdeki tüm şirketlerin listesini döndürür                                         | -                                                                                                                                                                              | JSON          | ✅ Aktif |
 | **GET**     | `/api/v1/meta/stats`                           | API kullanım istatistiklerini döndürür                                                | -                                                                                                                                                                              | JSON          | ✅ Aktif |
