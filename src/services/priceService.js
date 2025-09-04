@@ -46,7 +46,6 @@ const priceService = {
   },
 
   async getHistoricalPricesByCompany(companyName, currency = "TRY") {
-    console.log(companyName);
     const historicalPrices = await Price.find({ company: companyName }).sort({
       updateDate: -1,
     });

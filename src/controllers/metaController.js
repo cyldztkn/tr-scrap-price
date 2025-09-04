@@ -38,7 +38,7 @@ const metaController = {
   async getCompanies(req, res, next) {
     try {
       const companies = await priceService.getCompanies();
-      res.json(companies);
+      res.json(companies.sort((a, b) => a.name.localeCompare(b.name)));
     } catch (error) {
       next(error);
     }
@@ -86,8 +86,8 @@ const metaController = {
       const stats = {
         note: "This is a dummy data",
         totalCompanies: 6,
-        totalPriceRecords: 100, 
-        lastUpdated: new Date(), 
+        totalPriceRecords: 100,
+        lastUpdated: new Date(),
       };
       res.json(stats);
     } catch (error) {
