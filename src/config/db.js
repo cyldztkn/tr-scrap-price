@@ -1,4 +1,4 @@
-import { MongoClient } from "mongodb"; // MongoDB Client'ı import et
+
 import mongoose from 'mongoose';
 import config from './config.js';
 

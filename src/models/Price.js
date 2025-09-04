@@ -25,7 +25,7 @@ const priceSchema = new mongoose.Schema({
         EUR: Number,
     },
 }, {
-    timestamps: true, // Otomatik createdAt ve updatedAt alanları
+    timestamps: true, // Automatic createdAt and updatedAt fields
 });
 
 const Price = mongoose.model('Price', priceSchema);

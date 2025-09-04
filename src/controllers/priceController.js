@@ -1,5 +1,5 @@
 import priceService from "../services/priceService.js";
-import capitalize from "../utils/capitalize.js";
+import standardize from "../utils/standardize.js";
 
 /**
  * @swagger
@@ -64,24 +64,24 @@ const priceController = {
    *       200:
    *         description: Başarılı istek.
    *         content:
- *           application/json:
- *             example:
- *               company: "Şirket A"
- *               prices:
- *                 DKP: 12000
- *                 Ekstra: 11500
- *               currency: "TRY"
- *       404:
- *         description: Şirket bulunamadı.
- *       500:
- *         description: Sunucu hatası.
- */
+   *           application/json:
+   *             example:
+   *               company: "Şirket A"
+   *               prices:
+   *                 DKP: 12000
+   *                 Ekstra: 11500
+   *               currency: "TRY"
+   *       404:
+   *         description: Şirket bulunamadı.
+   *       500:
+   *         description: Sunucu hatası.
+   */
   async getLatestPriceByCompany(req, res, next) {
     try {
       const companyName = req.params.company;
       const currency = req.query.currency?.toUpperCase() || "TRY";
       const price = await priceService.getLatestPriceByCompany(
-        capitalize(companyName),
+        standardize(companyName),
         currency
       );
       if (price) {
@@ -123,22 +123,22 @@ const priceController = {
    *       200:
    *         description: Başarılı istek.
    *         content:
- *           application/json:
- *             example:
- *               company: "Şirket A"
- *               history:
- *                 - date: "2024-01-01"
- *                   prices:
- *                     DKP: 11000
- *                     Ekstra: 10500
- *                 - date: "2024-01-02"
- *                   prices:
- *                     DKP: 11200
- *                     Ekstra: 10700
- *               currency: "TRY"
- *       500:
- *         description: Sunucu hatası.
- */
+   *           application/json:
+   *             example:
+   *               company: "Şirket A"
+   *               history:
+   *                 - date: "2024-01-01"
+   *                   prices:
+   *                     DKP: 11000
+   *                     Ekstra: 10500
+   *                 - date: "2024-01-02"
+   *                   prices:
+   *                     DKP: 11200
+   *                     Ekstra: 10700
+   *               currency: "TRY"
+   *       500:
+   *         description: Sunucu hatası.
+   */
   async getHistoricalPricesByCompany(req, res, next) {
     try {
       const companyName = req.params.company;
@@ -146,20 +146,25 @@ const priceController = {
 
       const periodParam = req.query.period;
       const parsedDays = parseInt(periodParam, 10);
-      const days = Number.isFinite(parsedDays) && parsedDays > 0 ? parsedDays : 30;
+      const days =
+        Number.isFinite(parsedDays) && parsedDays > 0 ? parsedDays : 30;
 
       const endDate = new Date();
       const startDate = new Date();
       startDate.setDate(endDate.getDate() - (days - 1));
 
       const result = await priceService.getHistoricalPricesForPeriod(
-        [capitalize(companyName)],
+        [standardize(companyName)],
         startDate,
         endDate,
         currency
       );
-      const history = result[capitalize(companyName)] || [];
-      res.json(history);
+      const history = result[standardize(companyName)] || [];
+      if (history.length === 0) {
+        return res.status(404).json({ message: "Şirket fiyatı bulunamadı" });
+      } else {
+        res.json(history);
+      }
     } catch (error) {
       next(error);
     }
@@ -190,18 +195,18 @@ const priceController = {
    *       200:
    *         description: Başarılı istek.
    *         content:
- *           application/json:
- *             example:
- *               category: "DKP"
- *               analysis:
- *                 - company: "Şirket A"
- *                   price: 12000
- *                 - company: "Şirket B"
- *                   price: 12100
- *               currency: "TRY"
- *       500:
- *         description: Sunucu hatası.
- */
+   *           application/json:
+   *             example:
+   *               category: "DKP"
+   *               analysis:
+   *                 - company: "Şirket A"
+   *                   price: 12000
+   *                 - company: "Şirket B"
+   *                   price: 12100
+   *               currency: "TRY"
+   *       500:
+   *         description: Sunucu hatası.
+   */
   async getCategoryPriceAnalysis(req, res, next) {
     try {
       const category = req.params.category.toUpperCase();

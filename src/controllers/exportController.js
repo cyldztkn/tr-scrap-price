@@ -1,6 +1,6 @@
 import exportService from "../services/exportService.js";
 import priceService from "../services/priceService.js";
-import capitalize from "../utils/capitalize.js";
+import capitalize from "../utils/standardize.js";
 
 const exportController = {
   /**
@@ -148,7 +148,6 @@ const exportController = {
 
       const endDate = new Date();
       const startDate = new Date();
-      // Dahil edilecek gün sayısı için bugün dahil son X günü kapsa: X-1 geriye git
       startDate.setDate(endDate.getDate() - (days - 1));
 
       const prices = await priceService.getHistoricalPricesForPeriod(
