@@ -1,6 +1,7 @@
 import exportService from "../services/exportService.js";
 import priceService from "../services/priceService.js";
-import capitalize from "../utils/standardize.js";
+import standardize from "../utils/standardize.js";
+
 
 const exportController = {
   /**
@@ -124,7 +125,7 @@ const exportController = {
         return res.status(400).json({ error: "Şirket belirtilmelidir." });
       }
 
-      const company = capitalize(pathCompany);
+      const company = standardize(pathCompany);
       const html = await exportService.getLatestPriceHTMLForCompany(company, currency);
       res.setHeader("Content-Type", "text/html");
       res.send(html);
@@ -188,7 +189,7 @@ const exportController = {
         return res.status(400).json({ error: "Şirket belirtilmelidir." });
       }
 
-      const companies = [capitalize(pathCompany)];
+      const companies = [standardize(pathCompany)];
 
       const periodParam = req.query.period;
       const parsedDays = parseInt(periodParam, 10);
