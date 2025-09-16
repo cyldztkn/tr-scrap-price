@@ -10,7 +10,7 @@ function logToFile(data) {
 
 export const globalLimiter = rateLimit({
   windowMs: 60 * 1000,
-  limit: 100,
+  limit: 1000,
   standardHeaders: "draft-7", 
   legacyHeaders: false, 
   message: { error: "Too many requests" },
@@ -38,7 +38,7 @@ export const globalLimiter = rateLimit({
 
 export const heavyLimiter = rateLimit({
   windowMs: 60 * 1000,
-  limit: 50,
+  limit: 250,
   standardHeaders: "draft-7",
   legacyHeaders: false,
   message: { error: "Too many requests on heavy endpoint" },
