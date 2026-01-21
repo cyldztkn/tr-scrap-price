@@ -225,12 +225,12 @@ async function crawlKardemir() {
       waitUntil: "networkidle2",
     });
 
-    await page.waitForSelector("div.middlecontent", { timeout: 10000 });
+    await page.waitForSelector("div.middlecontent", { timeout: 20000 });
     await page.waitForSelector("div.middlecontent h4.ng-binding", {
-      timeout: 10000,
+      timeout: 20000,
     });
     await page.waitForSelector("div.middlecontent kar.ng-binding ul", {
-      timeout: 10000,
+      timeout: 20000,
     });
 
     const result = await page.evaluate(() => {
