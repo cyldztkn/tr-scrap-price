@@ -8,6 +8,13 @@ function logToFile(data) {
   });
 }
 
+function logToConsole(data) {
+  const line = `___404___\nBad Request at ${new Date().toISOString()}\nPath => ${data?.path}\nMethod => ${data?.method}\nIP => ${data?.ip}`
+
+  console.warn(line)
+}
+
+
 const errorHandler = (err, req, res, _next) => {
 
 
@@ -23,10 +30,11 @@ const errorHandler = (err, req, res, _next) => {
   };
 
   logToFile(logData);
+  logToConsole(logData);
   res.status(statusCode);
   res.json({
     message: err.message,
-    stack: process.env.NODE_ENV === "production" ? null : err.stack, 
+    stack: process.env.NODE_ENV === "production" ? null : err.stack,
   });
 };
 
