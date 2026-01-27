@@ -20,6 +20,9 @@ const startServer = async () => {
     await connectDB(); // Connect to MongoDB
     app.listen(config.port, () => {
       console.log(`Server is running on port ${config.port}`);
+      runAll()
+        .then(() => console.log("✅ Başlangıç crawler işlemi tamamlandı."))
+        .catch(err => console.error("❌ Başlangıç crawler hatası:", err));
     });
   } catch (error) {
     console.error("Server başlatılırken hata:", error);
